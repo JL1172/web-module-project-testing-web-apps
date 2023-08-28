@@ -81,13 +81,44 @@ test('renders "lastName is a required field" if an last name is not entered and 
     userEvent.type(email, "bluebill1049@hotmail.com");
     const submit = screen.getByRole("button");
     fireEvent.click(submit);
-    
+    await waitFor(()=> {
+        expect(screen.getByTestId("error")).toHaveTextContent(/Error: lastName is a required field./i);
+    })
 });
 
 test('renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.', async () => {
-
+    render(<ContactForm/>)
+    const fname = screen.getByPlaceholderText("Edd");
+    const email = screen.getByPlaceholderText(/bluebill1049@hotmail.com/i);
+    const lname = screen.getByPlaceholderText("Burke");
+    userEvent.type(fname, "Jacob");
+    userEvent.type(lname,"Lang")
+    userEvent.type(email, "bluebill1049@hotmail.com");
+    const submit = screen.getByRole("button");
+    fireEvent.click(submit);
+    await waitFor(()=> {
+        const message = screen.queryByTestId("messageDisplay");
+        expect(message).toBeFalsy();
+        expect(message).not.toBeInTheDocument()
+    })
 });
 
 test('renders all fields text when all fields are submitted.', async () => {
-
+    render(<ContactForm/>);
+    const fname = screen.getByPlaceholderText(/Edd/i);
+    const lname = screen.getByPlaceholderText(/Burke/i);
+    const email = screen.getByPlaceholderText(/bluebill1049@hotmail.com/i)
+    const message = screen.getByLabelText(/message/i);
+    const submit = screen.getByRole("button");
+    userEvent.type(fname,"Jacob")
+    userEvent.type(lname,"Lang")
+    userEvent.type(email,"bluebill1049@hotmail.com")
+    userEvent.type(message,"This is a message and I can write whatever I want")
+    fireEvent.click(submit);
+    await waitFor(()=> {
+        expect(screen.getByTestId("firstnameDisplay")).toHaveTextContent("Jacob");
+        expect(screen.getByTestId("lastnameDisplay")).toHaveTextContent("Lang");
+        expect(screen.getByTestId("emailDisplay")).toHaveTextContent("bluebill1049@hotmail.com");
+        expect(screen.getByTestId("messageDisplay")).toHaveTextContent("This is a message and I can write whatever I want");
+    })
 });
