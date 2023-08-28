@@ -80,6 +80,7 @@ const ContactForm = () => {
             value={form.firstName}
             id="firstName"
             placeholder="Edd"
+            data-testid = "fname"
           />
           {(errors.firstName) && <p data-testid="error">Error: {errors.firstName}</p>}
         </div>
